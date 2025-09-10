@@ -1,12 +1,7 @@
 ﻿numpy==2.2.6
 pandas==2.2.3
-python-dateutil==2.9.0.post0
 streamlit==1.45.1
 Jinja2==3.1.6
-jsonschema==4.23.0
-jsonschema-specifications==2024.10.1
 openpyxl==3.1.5
-pypiwin32==223
-pywin32==310
 xlrd==2.0.2
 XlsxWriter==3.2.3
