@@ -4,7 +4,7 @@ import streamlit as st
 from datetime import date, timedelta, datetime, time
 import sqlite3 as sq
 
-with st.expander("**:black_square_button: Import**"):
+with st.expander("**:inbox_tray: Import**"):
     code = '''
     import sqlite3 as sq
     '''
@@ -38,7 +38,7 @@ def get_db_connection():
     st.code(code_conn, language='python')
 
 #************************************************************************************************************************************************************************************
-with st.expander("**:computer: Creazione tabella all'interno del database**"):
+with st.expander("**:hammer_and_wrench: Creazione tabella all'interno del database**"):
     st.write("#### 1. Funzione per la creazione della tabella")
     st.write("- **crea_tabella_dinamica(`conn, nome_tabella, colonne`)**: Questa è la nostra nuova funzione. Accetta la connessione (conn), il nome della tabella (nome_tabella) e la definizione delle colonne (colonne). Usiamo un dizionario per le colonne, perché ci permette di associare facilmente il nome della colonna (chiave) con il suo tipo di dato (valore).")
     st.write("- **Costruzione della query:** All'interno della funzione, il ciclo for itera sul dizionario colonne. Per ogni coppia (**nome_colonna, tipo_colonna**), crea una stringa come **Data Date** e la aggiunge alla lista colonne_sql.")
@@ -122,7 +122,7 @@ if __name__ == "__main__":
 
 
 #************************************************************************************************************************************************************************************
-with st.expander("**:computer: Visualizza i dati**"):
+with st.expander("**:bar_chart: Visualizza i dati**"):
     st.write("#### Funzione per la visualizzazione dei dati caricati")
     code_load = '''
 def load_data(tab_name):
@@ -144,7 +144,7 @@ def load_data(tab_name):
     st.code(code_load, language='python')
 
 #************************************************************************************************************************************************************************************
-with st.expander("**:computer: Eliminazione Record**"):
+with st.expander("**:wastebasket: Eliminazione Record**"):
     st.write("#### 1. Eliminare tabella")
     
     code_delete_table = '''
