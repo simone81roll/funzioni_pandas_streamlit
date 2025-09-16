@@ -1,6 +1,7 @@
 import pandas as pd
 import numpy as np
 import streamlit as st
+import csv
 from datetime import date, timedelta, datetime, time
 from io import BytesIO
 from openpyxl import load_workbook, Workbook
@@ -23,7 +24,7 @@ data_ordini = {
 }
 ordini = pd.DataFrame(data_ordini)
 
-with st.expander("**:black_square_button: Import**"):
+with st.expander("**:inbox_tray: Import**"):
 	code = '''
 	from io import BytesIO
 	from openpyxl import load_workbook, Workbook
@@ -31,7 +32,7 @@ with st.expander("**:black_square_button: Import**"):
 	'''
 	st.code(code, language="python")
 #************************************************************************************************************************************************************************************
-with st.expander("**:black_square_button: Leggere un file .csv e .xlsx**"):
+with st.expander("**:open_file_folder: Leggere un file .csv e .xlsx**"):
     st.write("#### 1. Lettura file csv")
     code = '''
     file_csv = pd.read_csv(percorso_del_file_csv, sep = ';')
@@ -43,8 +44,79 @@ with st.expander("**:black_square_button: Leggere un file .csv e .xlsx**"):
     dataframe = pd.DataFrame(file_excel)'''
     st.code(code, language="python")
     st.info("usecols è opzionale e puoi decidere quali colonne importare, se non viene inserito verrà importato tutto il file")
+
+#************************************************************************************************************************************************************************************
+with st.expander("**:arrows_counterclockwise: Gestire Colonne Dinamiche con Mappatura**"):
+    st.write("Questa sezione mostra come creare un'applicazione flessibile per analizzare file in cui l'ordine o il nome delle colonne può cambiare.")
+    
+    st.subheader("1. Carica il tuo file di report")
+    code = '''uploaded_file = st.file_uploader(
+    "Scegli un file Excel o CSV",
+    type=['csv', 'xlsx'],
+    key="file_uploader_dinamico"
+)'''
+    st.code(code, language="python")
+    uploaded_file = st.file_uploader(
+        "Scegli un file Excel o CSV",
+        type=['csv', 'xlsx'],
+        key="file_uploader_dinamico"
+    )
+
+    df_originale = None
+    if uploaded_file:
+        try:
+            if uploaded_file.name.endswith('.csv'):
+                first_line = uploaded_file.readline().decode('utf-8')
+                dialect = csv.Sniffer().sniff(first_line)
+                separatore_rilevato = dialect.delimiter
+                st.info(f"Separatore del CSV rilevato automaticamente: **'{separatore_rilevato}'**")
+                uploaded_file.seek(0)
+                df_originale = pd.read_csv(uploaded_file, sep=separatore_rilevato)
+            else:
+                df_originale = pd.read_excel(uploaded_file)
+        except Exception as e:
+            st.error(f"Si è verificato un errore durante la lettura del file: {e}")
+            df_originale = None # Assicura che non si proceda se c'è errore
+
+    if df_originale is not None:
+        st.success("File caricato con successo!")
+        st.write("🔍 **Anteprima dei dati caricati**:")
+        st.dataframe(df_originale.head())
+
+        st.subheader("2. Mappa le colonne del tuo file 🗺️")
+        colonne_richieste = {
+            'ID Ordine': 'L\'identificativo univoco dell\'ordine.',
+            'Data Ordine': 'La data in cui è stato effettuato l\'ordine.',
+            'Prodotto': 'Il nome del prodotto venduto.',
+            'Importo': 'L\'importo numerico dell\'ordine.'
+        }
+        mappatura_colonne = {}
+        opzioni_colonne = df_originale.columns.tolist()
+        for nome_logico, descrizione in colonne_richieste.items():
+            mappatura_colonne[nome_logico] = st.selectbox(
+                f"Quale colonna rappresenta: **{nome_logico}**?",
+                options=opzioni_colonne,
+                help=descrizione,
+                key=f"map_{nome_logico}"
+            )
+
+        st.subheader("3. Creazione del Report Standardizzato ✅")
+        code_standard = '''dict_rinomina = {valore_scelto: nome_logico for nome_logico, valore_scelto in mappatura_colonne.items()}
+df_standard = df_originale.rename(columns=dict_rinomina)
+df_standard = df_standard[list(colonne_richieste.keys())]
+st.dataframe(df_standard)'''
+        st.code(code_standard, language="python")
+
+        if st.button("Crea Report Standardizzato"):
+            dict_rinomina = {valore_scelto: nome_logico for nome_logico, valore_scelto in mappatura_colonne.items()}
+            df_standard = df_originale.rename(columns=dict_rinomina)
+            df_standard = df_standard[list(colonne_richieste.keys())]
+            st.write("**Ecco il tuo DataFrame pulito e standardizzato, pronto per l'analisi!**")
+            st.dataframe(df_standard)
+
+
 #************************************************************************************************************************************************************************************    
-with st.expander("**:arrow_down: Esportare un DataFrame in .xlsx**"):
+with st.expander("**:outbox_tray: Esportare un DataFrame in Excel**"):
     st.write(
         """
         Una volta che i dati sono stati elaborati, è spesso necessario esportarli in un formato
