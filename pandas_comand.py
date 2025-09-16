@@ -10,7 +10,7 @@ anno_corrente = datetime.now().year
 
 st.subheader("Operazioni comuni sui DataFrame con PANDAS", divider ='blue')
 
-with st.expander("**:gear: Importazione librerie**"):
+with st.expander("**:package: Importazione librerie**"):
     st.write('#### Librerie necessarie per la produzione dello script')
     code = ''' import pandas as pd
 import numpy as np
@@ -20,7 +20,7 @@ from datetime import date, timedelta, datetime, time
     st.code(code, language="python")
 
 #************************************************************************************************************************************************************************************
-with st.expander("**:card_file_box: Creazione e visualizzazione di un dataframe**"):
+with st.expander("**:inbox_tray: Creazione e visualizzazione di un dataframe**"):
     st.write('#### 1. DataFrame Clienti')
     code = '''    data_clienti = {
         'ID_cliente': [1, 2, 3, 4, 5, 6, 7],
@@ -69,7 +69,7 @@ with st.expander("**:card_file_box: Creazione e visualizzazione di un dataframe*
     edited_ordini = st.data_editor(ordini, num_rows="dynamic")
 
 #************************************************************************************************************************************************************************************
-with st.expander("**:black_square_button: Aggiungere/Rinominare/Ordinare & Rimuovere colonne**"):
+with st.expander("**:pencil: Aggiungere/Rinominare/Ordinare & Rimuovere colonne**"):
     df_filtrato = ordini.copy()
 
     st.write('#### 1. Aggiungi colonna')
@@ -102,7 +102,7 @@ with st.expander("**:black_square_button: Aggiungere/Rinominare/Ordinare & Rimuo
     st.dataframe(df_filtrato_selezionato, use_container_width=True, hide_index = True)
 
 #************************************************************************************************************************************************************************************
-with st.expander("**:black_square_button: Selezionare Dati con .loc e .iloc**"):
+with st.expander("**:mag: Selezionare Dati con .loc e .iloc**"):
     st.write("`.loc` e `.iloc` sono i metodi principali per selezionare dati in un DataFrame.")
     st.write("- **`.loc`** seleziona i dati basandosi sulle **etichette** (nomi di righe e colonne).")
     st.write("- **`.iloc`** seleziona i dati basandosi sulla loro **posizione intera** (indici numerici).")
@@ -146,7 +146,7 @@ df_loc_iloc.iloc[1, 3]
     st.write(df_loc_iloc.iloc[1, 3])
 
 #************************************************************************************************************************************************************************************
-with st.expander("**:black_square_button: Ordinare i Dati con .sort_values()**"):
+with st.expander("**:arrow_up_down: Ordinare i Dati con .sort_values()**"):
     st.write("La funzione `sort_values()` permette di ordinare un DataFrame in base ai valori di una o più colonne.")
     
     st.write("#### 1. Ordinare per una colonna in ordine crescente")
@@ -176,7 +176,7 @@ df_multi_sort.sort_values(by=['citta', 'nome_cliente'])
     st.dataframe(df_multi_sort.sort_values(by=['citta', 'nome_cliente']), use_container_width=True, hide_index=True)
 
 #************************************************************************************************************************************************************************************
-with st.expander("**:black_square_button: Gestione dei valori mancanti**"):
+with st.expander("**:hole: Gestione dei valori mancanti**"):
     # Aggiungiamo un paio di valori mancanti a titolo dimostrativo
     ordini_missing = ordini.copy()
     ordini_missing.loc[2, 'Prodotto'] = np.nan
@@ -215,7 +215,7 @@ with st.expander("**:black_square_button: Gestione dei valori mancanti**"):
     st.dataframe(df_pulito_fillna, use_container_width=True, hide_index=True)
 
 #************************************************************************************************************************************************************************************
-with st.expander("**:black_square_button: Gestire i Duplicati**"):
+with st.expander("**:page_facing_up: Gestire i Duplicati**"):
     # Creiamo un DataFrame con un duplicato
     clienti_duplicati = pd.concat([clienti, clienti.iloc[[0]]], ignore_index=True)
     
@@ -243,7 +243,7 @@ clienti_senza_duplicati = clienti_duplicati.drop_duplicates()
     st.dataframe(clienti_senza_duplicati, use_container_width=True, hide_index=True)
 
 #************************************************************************************************************************************************************************************
-with st.expander("**:black_square_button: Operazioni sulle stringhe**"):
+with st.expander("**:abc: Operazioni sulle stringhe**"):
     st.write("Le colonne di tipo stringa hanno metodi speciali accessibili tramite l'attributo `.str`, che permettono di manipolare il testo in modo efficiente su intere colonne.")
     clienti_str = clienti.copy()
 
@@ -303,7 +303,7 @@ clienti_split[['Nome', 'Cognome']] = clienti_split['nome_cliente'].str.split(' '
     st.dataframe(clienti_split, use_container_width=True, hide_index=True)
 
 #************************************************************************************************************************************************************************************
-with st.expander("**:black_square_button: Applicare Funzioni Personalizzate con .apply()**"):
+with st.expander("**:sparkles: Applicare Funzioni Personalizzate con .apply()**"):
     st.write("La funzione `.apply()` è estremamente potente: permette di applicare una funzione personalizzata a ogni riga o colonna di un DataFrame.")
     apply_df = ordini.copy()
     
@@ -364,7 +364,7 @@ with st.expander("**:link: Funzione merge (Join)**"):
     st.dataframe(df_merge_right, use_container_width=True, hide_index=True)
 
 #************************************************************************************************************************************************************************************
-with st.expander("**:black_square_button: Funzione groupby (Raggruppamento)**"):
+with st.expander("**:busts_in_silhouette: Funzione groupby (Raggruppamento)**"):
     st.write("La funzione `groupby` divide un DataFrame in gruppi basandosi su una o più colonne, applica una funzione di aggregazione (somma, media, conteggio, etc.) a ogni gruppo e combina i risultati.")
 
     st.write("#### 1. Somma per gruppo")
@@ -398,7 +398,7 @@ with st.expander("**:black_square_button: Funzione groupby (Raggruppamento)**"):
     st.dataframe(statistiche_prodotto)
 
 #************************************************************************************************************************************************************************************
-with st.expander("**:black_square_button: Creare Tabelle Pivot con pivot_table()**"):
+with st.expander("**:bar_chart: Creare Tabelle Pivot con pivot_table()**"):
     st.write("Una tabella pivot è un potente strumento per riorganizzare e riassumere i dati, trasformando i valori di una colonna in nuove colonne.")
     st.write("Per questo esempio, prima uniamo i due DataFrame per avere a disposizione anche la città del cliente.")
     
@@ -422,7 +422,7 @@ vendite_pivot = df_pivot.pivot_table(
     st.dataframe(vendite_pivot)
     
 #************************************************************************************************************************************************************************************
-with st.expander("**:black_square_button: Filtrare con isin (Controllo Appartenenza)**"):
+with st.expander("**:inbox_tray: Filtrare con isin (Controllo Appartenenza)**"):
     st.write("La funzione `isin()` filtra un DataFrame basandosi su una lista di valori. È come chiedere: 'mostrami solo le righe dove il valore di questa colonna è presente in questa lista'. È un modo molto efficiente per eseguire un'operazione simile a un `INNER JOIN` ma restituendo solo le righe del DataFrame originale.")
     
     st.write("#### 1. Selezionare i clienti che hanno effettuato almeno un ordine")
