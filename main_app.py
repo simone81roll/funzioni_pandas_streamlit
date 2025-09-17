@@ -1,10 +1,13 @@
 import streamlit as st
 
-st.set_page_config(page_title="Python - Funzioni Utili", page_icon="🐍") 
+st.set_page_config(page_title="Python - Funzioni Utili", page_icon="🐍", layout="wide") 
 
 st.sidebar.image("python_logo.png", width=250) 
 
 pages = {
+    "Home":[
+        st.Page("home.py", title="Home Page", icon=":material/home:"),
+    ],
     "Pandas":[
         st.Page("pandas_comand.py", title="Comandi Pandas", icon=":material/data_table:"),
     ],
