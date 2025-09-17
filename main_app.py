@@ -19,7 +19,10 @@ pages = {
     ],
     "HTML":[
         st.Page("jinja2_comand.py", title="Principali comandi con Jinja2", icon=":material/code:"),
-    ],    
+    ],   
+    "e-mail":[
+        st.Page("email_comand.py", title="Principali comandi per l'invio di mail", icon=":material/alternate_email:"),
+    ],      
     "Varie":[
         st.Page("date_manipolation_comand.py", title="Operazioni sulle date", icon=":material/today:"), # Ho corretto il typo qui
         st.Page("istruzioni.py", title="Info utili", icon=":material/info:"),
