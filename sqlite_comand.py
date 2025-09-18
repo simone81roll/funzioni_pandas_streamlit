@@ -261,6 +261,32 @@ with st.expander("**:pencil2: Aggiornamento di Dati (UPDATE)**"):
     )
     
     st.write("#### 1. Funzione per l'aggiornamento dinamico")
+
+    def update_records_dinamicamente(conn, nome_tabella, dati_da_impostare, condizione):
+        if not conn or not dati_da_impostare or not condizione:
+            st.warning("Parametri non validi per l'aggiornamento.")
+            return
+
+        cursor = conn.cursor()
+        
+        # Costruisci la parte SET della query
+        set_clause = ", ".join([f"{col} = ?" for col in dati_da_impostare.keys()])
+        
+        # Costruisci la parte WHERE della query
+        where_clause = " AND ".join([f"{col} = ?" for col in condizione.keys()])
+        
+        query = f"UPDATE {nome_tabella} SET {set_clause} WHERE {where_clause}"
+        
+        # Combina i valori per SET e WHERE nell'ordine corretto
+        valori = list(dati_da_impostare.values()) + list(condizione.values())
+        
+        try:
+            cursor.execute(query, valori)
+            conn.commit()
+            st.success(f"{cursor.rowcount} record aggiornati con successo in '{nome_tabella}'.")
+        except sq.Error as e:
+            st.error(f"Errore durante l'aggiornamento dei record: {e}")
+
     
     code_update = '''
 def update_records_dinamicamente(conn, nome_tabella, dati_da_impostare, condizione):
