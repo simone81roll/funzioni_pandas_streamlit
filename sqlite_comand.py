@@ -4,6 +4,8 @@ import streamlit as st
 from datetime import date, timedelta, datetime, time
 import sqlite3 as sq
 
+st.subheader("🛢 Database con SQLite3", divider='blue')
+
 with st.expander("**:inbox_tray: Import**"):
     code = '''
     import sqlite3 as sq
