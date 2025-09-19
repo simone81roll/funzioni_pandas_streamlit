@@ -26,6 +26,12 @@ pages = {
     "e-mail":[
         st.Page("email_comand.py", title="Principali comandi per l'invio di mail", icon=":material/alternate_email:"),
     ],      
+    "Grafici":[
+        st.Page("grafici_comand.py", title="Realizzazione di grafici", icon=":material/pie_chart:"),
+    ],   
+    "Machine Learning":[
+        st.Page("machine_learning_comand.py", title="Esempi pratici di Machine Learning", icon=":material/batch_prediction:"),
+    ],            
     "Varie":[
         st.Page("date_manipolation_comand.py", title="Operazioni sulle date", icon=":material/today:"), # Ho corretto il typo qui
         st.Page("istruzioni.py", title="Info utili", icon=":material/info:"),
