@@ -1,0 +1,424 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Guida al Deployment Sicuro di App Streamlit</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Chosen Palette: Warm Neutrals -->
+    <!-- Application Structure Plan: A tab-based, sequential guide was chosen to walk the user through the deployment process in a logical, step-by-step manner. This structure breaks down a complex topic into manageable phases (Preparation, Docker, Deployment), making it easy to follow. An interactive checklist and visual diagrams reinforce the learning process. This is more effective for a procedural guide than a dashboard or thematic layout. -->
+    <!-- Visualization & Content Choices: Report Info: User needs a guide for Streamlit deployment. -> Goal: Inform and guide through a technical process. -> Viz/Presentation Method: Code blocks for technical details, HTML/CSS diagrams for process visualization (folder structure, deployment flow), and an interactive HTML checklist for task tracking. -> Interaction: Tab navigation for sectional focus, copy-to-clipboard for code usability, and checklist for engagement. -> Justification: This combination of formatted text, code, and simple interactive elements is the clearest way to present a multi-step technical procedure without the need for data charts. -> Library/Method: Vanilla JS for interactions, Tailwind CSS for layout and diagrams. CONFIRMS NO SVG/Mermaid. -->
+    <!-- CONFIRMATION: NO SVG graphics used. NO Mermaid JS used. -->
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #f5f5f4; /* stone-100 */
+            color: #292524; /* stone-800 */
+        }
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;700&display=swap');
+        .tab-button {
+            transition: all 0.3s ease;
+        }
+        .tab-button.active {
+            border-color: #0d9488; /* teal-600 */
+            color: #0d9488; /* teal-600 */
+            background-color: #f0fdfa; /* teal-50 */
+        }
+        .content-section {
+            display: none;
+        }
+        .content-section.active {
+            display: block;
+        }
+        .code-block {
+            position: relative;
+            background-color: #292524; /* stone-800 */
+            color: #fafaf9; /* stone-50 */
+            border-radius: 0.5rem;
+            padding: 1rem;
+            overflow-x: auto;
+        }
+        .copy-button {
+            position: absolute;
+            top: 0.5rem;
+            right: 0.5rem;
+            background-color: #57534e; /* stone-600 */
+            color: white;
+            border: none;
+            padding: 0.25rem 0.5rem;
+            border-radius: 0.25rem;
+            cursor: pointer;
+            font-size: 0.8rem;
+        }
+        .copy-button:hover {
+            background-color: #78716c; /* stone-500 */
+        }
+        .checklist-item {
+            display: flex;
+            align-items: center;
+            padding: 0.75rem;
+            border-radius: 0.5rem;
+            background-color: #fafaf9; /* stone-50 */
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+        .checklist-item.completed {
+            background-color: #ccfbf1; /* teal-100 */
+            text-decoration: line-through;
+            color: #57534e; /* stone-600 */
+        }
+        .checklist-checkbox {
+            width: 1.25rem;
+            height: 1.25rem;
+            border-radius: 0.25rem;
+            border: 2px solid #a8a29e; /* stone-400 */
+            margin-right: 0.75rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+        }
+        .checklist-item.completed .checklist-checkbox {
+            background-color: #0d9488; /* teal-600 */
+            border-color: #0d9488; /* teal-600 */
+        }
+        .flowchart-step {
+            background-color: white;
+            border: 1px solid #e7e5e4; /* stone-200 */
+            border-radius: 0.5rem;
+            padding: 1rem;
+            text-align: center;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+        }
+        .flowchart-arrow {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 2rem;
+            color: #a8a29e; /* stone-400 */
+        }
+    </style>
+</head>
+<body>
+    <div class="max-w-7xl mx-auto p-4 sm:p-6 lg:p-8">
+        <header class="text-center mb-10">
+            <h1 class="text-4xl font-bold text-teal-700">Deployment di App Streamlit con Docker</h1>
+            <p class="mt-4 text-lg text-stone-600 max-w-3xl mx-auto">Una guida per rendere la tua applicazione Streamlit disponibile in modo sicuro, affidabile e scalabile all'interno della tua azienda.</p>
+        </header>
+
+        <nav class="flex flex-wrap justify-center border-b border-stone-300 mb-8">
+            <button class="tab-button active py-3 px-6 text-lg font-medium border-b-2 border-transparent" data-tab="panoramica">Panoramica</button>
+            <button class="tab-button py-3 px-6 text-lg font-medium border-b-2 border-transparent" data-tab="preparazione">Fase 1: Preparazione</button>
+            <button class="tab-button py-3 px-6 text-lg font-medium border-b-2 border-transparent" data-tab="docker">Fase 2: Docker</button>
+            <button class="tab-button py-3 px-6 text-lg font-medium border-b-2 border-transparent" data-tab="deployment">Fase 3: Deployment</button>
+            <button class="tab-button py-3 px-6 text-lg font-medium border-b-2 border-transparent" data-tab="checklist">Checklist</button>
+        </nav>
+
+        <main id="main-content">
+            <section id="panoramica" class="content-section active">
+                 <div class="bg-white p-8 rounded-lg shadow-md">
+                    <h2 class="text-3xl font-bold text-stone-800 mb-4">Perché usare Docker?</h2>
+                    <p class="text-stone-600 leading-relaxed mb-6">
+                        Hai menzionato Docker ed è un'ottima scelta. Docker "impacchetta" la tua applicazione Streamlit con tutte le sue dipendenze (librerie Python, file, configurazioni) in un'unità standardizzata chiamata <span class="font-semibold text-teal-700">container</span>. Questo approccio offre vantaggi cruciali per un ambiente aziendale:
+                    </p>
+                    <div class="grid md:grid-cols-3 gap-6 text-center">
+                        <div class="p-6 bg-stone-50 rounded-lg">
+                            <div class="text-4xl mb-3">📦</div>
+                            <h3 class="text-xl font-semibold mb-2">Affidabilità</h3>
+                            <p class="text-stone-600">"Funziona sulla mia macchina" diventa "Funziona ovunque". Il container si comporta allo stesso modo in sviluppo, test e produzione, eliminando sorprese.</p>
+                        </div>
+                        <div class="p-6 bg-stone-50 rounded-lg">
+                            <div class="text-4xl mb-3">🛡️</div>
+                            <h3 class="text-xl font-semibold mb-2">Sicurezza</h3>
+                            <p class="text-stone-600">I container isolano l'applicazione dal sistema operativo host e da altre applicazioni, riducendo la superficie di attacco.</p>
+                        </div>
+                        <div class="p-6 bg-stone-50 rounded-lg">
+                             <div class="text-4xl mb-3">🚀</div>
+                            <h3 class="text-xl font-semibold mb-2">Scalabilità</h3>
+                            <p class="text-stone-600">È facile avviare più istanze della tua app per gestire un numero maggiore di utenti, sia su server interni che in cloud.</p>
+                        </div>
+                    </div>
+                     <h3 class="text-2xl font-bold text-stone-800 mt-8 mb-4">Il Flusso di Lavoro</h3>
+                     <p class="text-stone-600 leading-relaxed mb-6">
+                        Seguiremo un processo strutturato per portare la tua app dalla fase di sviluppo a quella di produzione. Ogni fase si basa sulla precedente per garantire un risultato solido e manutenibile.
+                     </p>
+                     <div class="grid grid-cols-1 md:grid-cols-5 items-center gap-4 text-sm">
+                        <div class="flowchart-step"><strong>1. Codice Sorgente</strong><br/>Prepara la tua app Streamlit e le dipendenze.</div>
+                        <div class="flowchart-arrow hidden md:flex">→</div>
+                        <div class="flowchart-step"><strong>2. Dockerfile</strong><br/>Crea la "ricetta" per costruire l'immagine della tua app.</div>
+                        <div class="flowchart-arrow hidden md:flex">→</div>
+                        <div class="flowchart-step"><strong>3. Immagine Docker</strong><br/>Costruisci un pacchetto portabile e auto-contenuto.</div>
+                        <div class="flowchart-arrow hidden md:flex">→</div>
+                        <div class="flowchart-step"><strong>4. Registry</strong><br/>Salva la tua immagine in un repository sicuro (es. Docker Hub, ECR).</div>
+                        <div class="flowchart-arrow hidden md:flex">→</div>
+                        <div class="flowchart-step"><strong>5. Deployment</strong><br/>Esegui il container su un server aziendale o in cloud.</div>
+                    </div>
+                </div>
+            </section>
+
+            <section id="preparazione" class="content-section">
+                <div class="bg-white p-8 rounded-lg shadow-md">
+                    <h2 class="text-3xl font-bold text-stone-800 mb-4">Fase 1: Preparazione del Progetto</h2>
+                    <p class="text-stone-600 leading-relaxed mb-6">Prima di scrivere il Dockerfile, assicuriamoci che il progetto sia ben strutturato. Una buona organizzazione semplifica enormemente il processo di containerizzazione.</p>
+                    
+                    <h3 class="text-2xl font-semibold text-stone-700 mb-3">1. File delle Dipendenze (`requirements.txt`)</h3>
+                    <p class="text-stone-600 mb-4">Questo file elenca tutte le librerie Python necessarie. Crealo nella cartella principale del tuo progetto. Puoi generarlo automaticamente con:</p>
+                    <div class="code-block mb-6">
+                        <button class="copy-button">Copia</button>
+                        <pre><code>pip freeze > requirements.txt</code></pre>
+                    </div>
+                    <p class="text-stone-600 mb-4">Un esempio di `requirements.txt` potrebbe essere:</p>
+                    <div class="code-block mb-6">
+                        <button class="copy-button">Copia</button>
+                        <pre><code>streamlit==1.30.0
+pandas==2.1.4
+numpy==1.26.2
+plotly==5.18.0</code></pre>
+                    </div>
+
+                    <h3 class="text-2xl font-semibold text-stone-700 mb-3 mt-8">2. Struttura della Cartella</h3>
+                    <p class="text-stone-600 mb-4">Una struttura chiara è fondamentale. Assicurati che il tuo progetto assomigli a questo:</p>
+                    <div class="bg-stone-50 p-4 rounded-lg border border-stone-200">
+                        <p class="font-mono text-stone-700">
+                            tuo-progetto/<br>
+                            ├── .streamlit/ <span class="text-stone-500"> (opzionale, per config)</span><br>
+                            │   └── config.toml<br>
+                            ├── app.py <span class="text-stone-500">(il tuo script principale)</span><br>
+                            ├── Dockerfile <span class="text-stone-500">(lo creeremo dopo)</span><br>
+                            └── requirements.txt
+                        </p>
+                    </div>
+                </div>
+            </section>
+            
+            <section id="docker" class="content-section">
+                <div class="bg-white p-8 rounded-lg shadow-md">
+                    <h2 class="text-3xl font-bold text-stone-800 mb-4">Fase 2: Creazione del Dockerfile</h2>
+                    <p class="text-stone-600 leading-relaxed mb-6">Il `Dockerfile` è un file di testo che contiene le istruzioni per assemblare l'immagine della tua applicazione. È la ricetta che Docker seguirà. Crea un file chiamato `Dockerfile` (senza estensione) nella cartella principale del tuo progetto.</p>
+                    
+                    <h3 class="text-2xl font-semibold text-stone-700 mb-3">Dockerfile di Esempio</h3>
+                    <p class="text-stone-600 mb-4">Ecco un template solido e commentato. Copialo nel tuo `Dockerfile`.</p>
+                    <div class="code-block mb-6">
+                        <button class="copy-button">Copia</button>
+                        <pre><code># Usa un'immagine Python ufficiale come base
+FROM python:3.9-slim
+
+# Imposta la directory di lavoro all'interno del container
+WORKDIR /app
+
+# Copia il file delle dipendenze
+COPY requirements.txt ./
+
+# Installa le dipendenze
+RUN pip install --no-cache-dir -r requirements.txt
+
+# Copia il resto dei file dell'applicazione
+COPY . .
+
+# Esponi la porta su cui Streamlit verrà eseguito
+EXPOSE 8501
+
+# Comando per avviare l'app quando il container parte
+CMD ["streamlit", "run", "app.py", "--server.port=8501", "--server.address=0.0.0.0"]
+</code></pre>
+                    </div>
+
+                    <h3 class="text-2xl font-semibold text-stone-700 mb-3 mt-8">Costruire l'Immagine Docker</h3>
+                    <p class="text-stone-600 mb-4">Ora che hai il Dockerfile, apri un terminale nella cartella del progetto ed esegui questo comando. Sostituisci `nome-tua-app` con un nome significativo.</p>
+                    <div class="code-block mb-6">
+                        <button class="copy-button">Copia</button>
+                        <pre><code>docker build -t nome-tua-app .</code></pre>
+                    </div>
+                     <p class="text-stone-600 mb-4">Questo processo potrebbe richiedere alcuni minuti la prima volta, poiché Docker scaricherà l'immagine base di Python e installerà le tue dipendenze. Al termine, avrai un'immagine Docker pronta per essere eseguita.</p>
+                </div>
+            </section>
+
+            <section id="deployment" class="content-section">
+                 <div class="bg-white p-8 rounded-lg shadow-md">
+                    <h2 class="text-3xl font-bold text-stone-800 mb-4">Fase 3: Opzioni di Deployment</h2>
+                    <p class="text-stone-600 leading-relaxed mb-6">Con l'immagine Docker pronta, hai diverse opzioni per renderla accessibile ai tuoi colleghi. La scelta dipende dall'infrastruttura IT della tua azienda.</p>
+
+                    <div class="space-y-8">
+                        <div>
+                            <h3 class="text-2xl font-semibold text-stone-700 mb-3">Opzione A: Server Interno (On-Premise)</h3>
+                            <p class="text-stone-600 mb-4">Se la tua azienda ha server interni (fisici o virtuali) con Docker installato, questa è la via più diretta. Puoi eseguire la tua app con un singolo comando:</p>
+                            <div class="code-block mb-4">
+                                <button class="copy-button">Copia</button>
+                                <pre><code>docker run -d -p 8501:8501 nome-tua-app</code></pre>
+                            </div>
+                            <ul class="list-disc list-inside text-stone-600 space-y-1">
+                                <li><code>-d</code>: Esegue il container in background (detached mode).</li>
+                                <li><code>-p 8501:8501</code>: Mappa la porta 8501 del container alla porta 8501 del server.</li>
+                            </ul>
+                             <p class="text-stone-600 mt-4">L'app sarà accessibile all'indirizzo <code>http://&lt;IP_DEL_SERVER&gt;:8501</code>.</p>
+                        </div>
+                        
+                        <div class="border-t border-stone-200 pt-8">
+                            <h3 class="text-2xl font-semibold text-stone-700 mb-3">Opzione B: Piattaforme Cloud (in una Rete Privata)</h3>
+                            <p class="text-stone-600 mb-4">Se la tua azienda utilizza servizi cloud, puoi effettuare il deployment in un ambiente isolato e sicuro (VPC - Virtual Private Cloud). Questo offre maggiore flessibilità e scalabilità.</p>
+                            <div class="grid md:grid-cols-3 gap-4">
+                                <div class="p-4 bg-stone-50 rounded-lg border">
+                                    <h4 class="font-bold">AWS</h4>
+                                    <p class="text-sm">Servizi come <strong>Amazon ECS</strong> (Elastic Container Service) o <strong>AWS App Runner</strong> sono ideali per eseguire container Docker.</p>
+                                </div>
+                                <div class="p-4 bg-stone-50 rounded-lg border">
+                                    <h4 class="font-bold">Azure</h4>
+                                    <p class="text-sm"><strong>Azure App Service</strong> o <strong>Azure Container Instances</strong> offrono un modo semplice per ospitare la tua app containerizzata.</p>
+                                </div>
+                                <div class="p-4 bg-stone-50 rounded-lg border">
+                                    <h4 class="font-bold">Google Cloud</h4>
+                                    <p class="text-sm"><strong>Google Cloud Run</strong> è un'ottima opzione serverless per eseguire container in modo scalabile e sicuro.</p>
+                                </div>
+                            </div>
+                            <p class="text-stone-600 mt-4">Il processo generale per il cloud è:</p>
+                            <ol class="list-decimal list-inside text-stone-600 space-y-1 mt-2">
+                                <li><strong>Push dell'immagine:</strong> Carica la tua immagine Docker su un container registry privato (es. Amazon ECR, Azure Container Registry, Google Artifact Registry).</li>
+                                <li><strong>Configurazione del servizio:</strong> Crea un nuovo servizio sulla piattaforma scelta, puntando alla tua immagine nel registry.</li>
+                                <li><strong>Configurazione di rete e sicurezza:</strong> Assicurati che l'app sia accessibile solo dall'interno della rete aziendale (tramite VPN o configurazioni di rete specifiche).</li>
+                            </ol>
+                        </div>
+
+                        <div class="border-t border-stone-200 pt-8">
+                            <h3 class="text-2xl font-semibold text-stone-700 mb-3">Considerazioni sulla Sicurezza</h3>
+                            <ul class="list-disc list-inside text-stone-600 space-y-2">
+                                <li><strong>Gestione delle Credenziali:</strong> Non inserire mai password o chiavi API direttamente nel codice o nel Dockerfile. Usa variabili d'ambiente fornite dal servizio di deployment.</li>
+                                <li><strong>Accesso Ristretto:</strong> Configura le regole del firewall sul server o nel cloud per permettere l'accesso solo da indirizzi IP aziendali.</li>
+                                <li><strong>Autenticazione:</strong> Se l'app gestisce dati sensibili, considera l'integrazione di un sistema di autenticazione (es. tramite un reverse proxy come Nginx con autenticazione di base o integrazione con l'SSO aziendale).</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </section>
+            
+            <section id="checklist" class="content-section">
+                <div class="bg-white p-8 rounded-lg shadow-md">
+                    <h2 class="text-3xl font-bold text-stone-800 mb-4">Checklist Interattiva del Deployment</h2>
+                    <p class="text-stone-600 leading-relaxed mb-6">Usa questa checklist per tenere traccia dei tuoi progressi. Clicca su ogni punto per segnarlo come completato.</p>
+                    <div class="space-y-4">
+                        <div class="checklist-item">
+                            <div class="checklist-checkbox"></div>
+                            <span>Creare il file `requirements.txt` con tutte le dipendenze.</span>
+                        </div>
+                        <div class="checklist-item">
+                            <div class="checklist-checkbox"></div>
+                            <span>Verificare la struttura del progetto (`app.py`, `requirements.txt`).</span>
+                        </div>
+                        <div class="checklist-item">
+                            <div class="checklist-checkbox"></div>
+                            <span>Creare il file `Dockerfile` nella cartella principale.</span>
+                        </div>
+                        <div class="checklist-item">
+                            <div class="checklist-checkbox"></div>
+                            <span>Eseguire il comando `docker build` per creare l'immagine.</span>
+                        </div>
+                         <div class="checklist-item">
+                            <div class="checklist-checkbox"></div>
+                            <span>Verificare che l'immagine sia stata creata con `docker images`.</span>
+                        </div>
+                        <div class="checklist-item">
+                            <div class="checklist-checkbox"></div>
+                            <span>Testare l'immagine in locale con `docker run`.</span>
+                        </div>
+                        <div class="checklist-item">
+                            <div class="checklist-checkbox"></div>
+                            <span>Scegliere la piattaforma di deployment (server interno o cloud).</span>
+                        </div>
+                        <div class="checklist-item">
+                            <div class="checklist-checkbox"></div>
+                            <span>(Se Cloud) Caricare l'immagine su un container registry privato.</span>
+                        </div>
+                        <div class="checklist-item">
+                            <div class="checklist-checkbox"></div>
+                            <span>Eseguire il container sulla piattaforma scelta.</span>
+                        </div>
+                        <div class="checklist-item">
+                            <div class="checklist-checkbox"></div>
+                            <span>Configurare le regole di rete e firewall per l'accesso sicuro.</span>
+                        </div>
+                         <div class="checklist-item">
+                            <div class="checklist-checkbox"></div>
+                            <span>Verificare che l'app sia accessibile all'URL corretto.</span>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+        </main>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            const tabs = document.querySelectorAll('.tab-button');
+            const sections = document.querySelectorAll('.content-section');
+            const copyButtons = document.querySelectorAll('.copy-button');
+            const checklistItems = document.querySelectorAll('.checklist-item');
+
+            tabs.forEach(tab => {
+                tab.addEventListener('click', () => {
+                    const targetTab = tab.getAttribute('data-tab');
+
+                    tabs.forEach(t => t.classList.remove('active'));
+                    tab.classList.add('active');
+
+                    sections.forEach(section => {
+                        if (section.id === targetTab) {
+                            section.classList.add('active');
+                        } else {
+                            section.classList.remove('active');
+                        }
+                    });
+                });
+            });
+
+            copyButtons.forEach(button => {
+                button.addEventListener('click', (e) => {
+                    const codeBlock = e.target.closest('.code-block');
+                    const code = codeBlock.querySelector('pre code').innerText;
+                    
+                    try {
+                        const blob = new Blob([code], { type: 'text/plain' });
+                        const item = new ClipboardItem({ 'text/plain': blob });
+                        navigator.clipboard.write([item]).then(() => {
+                            button.innerText = 'Copiato!';
+                            setTimeout(() => { button.innerText = 'Copia'; }, 2000);
+                        }).catch(err => {
+                            fallbackCopyTextToClipboard(code, button);
+                        });
+                    } catch (e) {
+                         fallbackCopyTextToClipboard(code, button);
+                    }
+                });
+            });
+            
+            function fallbackCopyTextToClipboard(text, button) {
+                const textArea = document.createElement('textarea');
+                textArea.value = text;
+                textArea.style.position = 'fixed';
+                document.body.appendChild(textArea);
+                textArea.focus();
+                textArea.select();
+                try {
+                    document.execCommand('copy');
+                    button.innerText = 'Copiato!';
+                    setTimeout(() => { button.innerText = 'Copia'; }, 2000);
+                } catch (err) {
+                    console.error('Fallback: Oops, unable to copy', err);
+                }
+                document.body.removeChild(textArea);
+            }
+
+            checklistItems.forEach(item => {
+                item.addEventListener('click', () => {
+                    item.classList.toggle('completed');
+                    const checkbox = item.querySelector('.checklist-checkbox');
+                    if (item.classList.contains('completed')) {
+                        checkbox.innerHTML = '<svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M5 13l4 4L19 7" /></svg>';
+                    } else {
+                        checkbox.innerHTML = '';
+                    }
+                });
+            });
+        });
+    </script>
+</body>
+</html>
