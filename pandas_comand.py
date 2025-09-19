@@ -8,7 +8,7 @@ today = date.today()
 month_today = today.month
 anno_corrente = datetime.now().year
 
-st.subheader("Operazioni comuni sui DataFrame con PANDAS", divider ='blue')
+st.subheader("🐼 Operazioni comuni sui DataFrame con PANDAS", divider ='blue')
 
 with st.expander("**:package: Importazione librerie**"):
     st.write('#### Librerie necessarie per la produzione dello script')
