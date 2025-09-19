@@ -7,6 +7,7 @@ from io import BytesIO
 from openpyxl import load_workbook, Workbook
 import os
 
+st.subheader("📋 Elaborare file excel", divider='blue')
 
 data_clienti = {
     'ID_cliente': [1, 2, 3, 4, 5, 6, 7],
