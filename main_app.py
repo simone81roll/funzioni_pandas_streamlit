@@ -35,6 +35,7 @@ pages = {
     "Varie":[
         st.Page("date_manipolation_comand.py", title="Operazioni sulle date", icon=":material/today:"), # Ho corretto il typo qui
         st.Page("istruzioni.py", title="Info utili", icon=":material/info:"),
+        st.Page("guida_deployment.py", title="Guida al deployment", icon=":material/deployed_code_update:"),
     ],        
 }
 
