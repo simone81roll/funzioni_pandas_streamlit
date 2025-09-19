@@ -5,6 +5,7 @@ import numpy as np
 from jinja2_function import create_html_df
 
 
+st.subheader("🌐 HTML con Jinja2", divider='blue')
 
 today = date.today()
 today_ggmm = today.strftime("%d/%m")
