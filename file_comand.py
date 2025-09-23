@@ -85,6 +85,7 @@ with st.expander("**:arrows_counterclockwise: Gestire Colonne Dinamiche con Mapp
         st.dataframe(df_originale.head())
 
         st.subheader("2. Mappa le colonne del tuo file 🗺️")
+        
         colonne_richieste = {
             'ID Ordine': 'L\'identificativo univoco dell\'ordine.',
             'Data Ordine': 'La data in cui è stato effettuato l\'ordine.',
@@ -101,7 +102,25 @@ with st.expander("**:arrows_counterclockwise: Gestire Colonne Dinamiche con Mapp
                 key=f"map_{nome_logico}"
             )
 
+        code_map = '''colonne_richieste = {
+    'ID Ordine': "L\'identificativo univoco dell\'ordine.",
+    'Data Ordine': "La data in cui è stato effettuato l\'ordine.",
+    'Prodotto': "Il nome del prodotto venduto.",
+    'Importo': "L\'importo numerico dell\'ordine."
+}
+mappatura_colonne = {}
+opzioni_colonne = df_originale.columns.tolist()
+for nome_logico, descrizione in colonne_richieste.items():
+    mappatura_colonne[nome_logico] = st.selectbox(
+        f"Quale colonna rappresenta: **{nome_logico}**?",
+        options=opzioni_colonne,
+        help=descrizione,
+        key=f"map_{nome_logico}"
+    )'''
+        st.code(code_map, language="python")
+
         st.subheader("3. Creazione del Report Standardizzato ✅")
+
         code_standard = '''dict_rinomina = {valore_scelto: nome_logico for nome_logico, valore_scelto in mappatura_colonne.items()}
 df_standard = df_originale.rename(columns=dict_rinomina)
 df_standard = df_standard[list(colonne_richieste.keys())]
@@ -129,10 +148,12 @@ with st.expander("**:outbox_tray: Esportare un DataFrame in Excel**"):
     )
 
     # Usiamo il DataFrame 'clienti' e 'ordini' come esempio
-    st.write("Esempio di esportazione dei DataFrame 'clienti' e 'ordini' in un unico file Excel con due fogli di lavoro.")
+    st.write("Esempio di esportazione dei DataFrame 'clienti' e 'ordini' in un unico file Excel con due fogli di lavoro e l'aggiunta di layout personalizzati")
 
     code = '''
 from io import BytesIO
+from openpyxl.styles import Font, PatternFill, Alignment, Border, Side
+from openpyxl.utils import get_column_letter
 
 output = BytesIO()
 
@@ -141,30 +162,120 @@ with pd.ExcelWriter(output, engine='openpyxl') as writer:
     clienti.to_excel(writer, index=False, sheet_name='Clienti')
     ordini.to_excel(writer, index=False, sheet_name='Ordini')
 
+    # --- 2. Accesso al workbook e ai fogli di lavoro di openpyxl ---
+    workbook = writer.book
+    worksheet_clienti = writer.sheets['Clienti']
+    worksheet_ordini = writer.sheets['Ordini']
+
+    # --- 3. Definizione degli stili ---
+    header_font = Font(bold=True, color="FFFFFF", name="Calibri")
+    header_fill = PatternFill(start_color="4F81BD", end_color="4F81BD", fill_type="solid")
+    header_alignment = Alignment(horizontal="center", vertical="center")
+    thin_border = Border(left=Side(style='thin'), 
+                         right=Side(style='thin'), 
+                         top=Side(style='thin'), 
+                         bottom=Side(style='thin'))
+
+    # --- 4. Funzione per applicare stili e auto-adattare le colonne ---
+    def format_sheet(worksheet):
+        # Applica stile all'intestazione
+        for cell in worksheet[1]:
+            cell.font = header_font
+            cell.fill = header_fill
+            cell.alignment = header_alignment
+            cell.border = thin_border
+        
+        # Auto-adatta la larghezza delle colonne
+        for col in worksheet.columns:
+            max_length = 0
+            column = col[0].column_letter # Ottieni la lettera della colonna
+            for cell in col:
+                # Applica il bordo a tutte le celle
+                cell.border = thin_border
+                try:
+                    if len(str(cell.value)) > max_length:
+                        max_length = len(str(cell.value))
+                except:
+                    pass
+            adjusted_width = (max_length + 2)
+            worksheet.column_dimensions[column].width = adjusted_width
+
+    # --- 5. Applicazione della formattazione ai fogli ---
+    format_sheet(worksheet_clienti)
+    format_sheet(worksheet_ordini)
+
+
 # Recuperiamo i dati binari del file Excel creato in memoria
 file_data = output.getvalue()
 
 st.download_button(
-    label="📥 Scarica File Excel",
+    label="📥 Scarica File Excel Formattato",
     data=file_data,
-    file_name="Export_Clienti_Ordini.xlsx",
+    file_name="Export_Formattato.xlsx",
     mime="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
 )
     '''
     st.code(code, language='python')
+
+from io import BytesIO
+from openpyxl.styles import Font, PatternFill, Alignment, Border, Side
+from openpyxl.utils import get_column_letter
     
-    output = BytesIO()
+output = BytesIO()
 
-    with pd.ExcelWriter(output, engine='openpyxl') as writer:
-        clienti.to_excel(writer, index=False, sheet_name='Clienti')
-        ordini.to_excel(writer, index=False, sheet_name='Ordini')
+with pd.ExcelWriter(output, engine='openpyxl') as writer:
+    clienti.to_excel(writer, index=False, sheet_name='Clienti')
+    ordini.to_excel(writer, index=False, sheet_name='Ordini')
 
-    file_data = output.getvalue()
+    # --- 2. Accesso al workbook e ai fogli di lavoro di openpyxl ---
+    workbook = writer.book
+    worksheet_clienti = writer.sheets['Clienti']
+    worksheet_ordini = writer.sheets['Ordini']
 
-    st.download_button(
-        label="📥 Scarica File Excel",
-        data=file_data,
-        file_name="Export_Clienti_Ordini.xlsx",
-        mime="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
-        key='download-excel'
-    )
+    # --- 3. Definizione degli stili ---
+    header_font = Font(bold=True, color="FFFFFF", name="Calibri")
+    header_fill = PatternFill(start_color="4F81BD", end_color="4F81BD", fill_type="solid")
+    header_alignment = Alignment(horizontal="center", vertical="center")
+    thin_border = Border(left=Side(style='thin'), 
+                         right=Side(style='thin'), 
+                         top=Side(style='thin'), 
+                         bottom=Side(style='thin'))
+
+    # --- 4. Funzione per applicare stili e auto-adattare le colonne ---
+    def format_sheet(worksheet):
+        # Applica stile all'intestazione
+        for cell in worksheet[1]:
+            cell.font = header_font
+            cell.fill = header_fill
+            cell.alignment = header_alignment
+            cell.border = thin_border
+        
+        # Auto-adatta la larghezza delle colonne
+        for col in worksheet.columns:
+            max_length = 0
+            column = col[0].column_letter # Ottieni la lettera della colonna
+            for cell in col:
+                # Applica il bordo a tutte le celle
+                cell.border = thin_border
+                try:
+                    if len(str(cell.value)) > max_length:
+                        max_length = len(str(cell.value))
+                except:
+                    pass
+            adjusted_width = (max_length + 2)
+            worksheet.column_dimensions[column].width = adjusted_width
+
+    # --- 5. Applicazione della formattazione ai fogli ---
+    format_sheet(worksheet_clienti)
+    format_sheet(worksheet_ordini)
+
+
+# Recuperiamo i dati binari del file Excel creato in memoria
+file_data = output.getvalue()
+
+st.download_button(
+    label="📥 Scarica File Excel Formattato",
+    data=file_data,
+    file_name="Export_Formattato.xlsx",
+    mime="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
+)
