@@ -4,7 +4,6 @@ from io import BytesIO
 from openpyxl.styles import Font, PatternFill, Alignment, Border, Side, colors
 from openpyxl.utils import get_column_letter
 from openpyxl.formatting.rule import IconSetRule
-from st_aggrid import AgGrid, GridOptionsBuilder, JsCode, GridUpdateMode
 
 st.subheader("📋 Elaborare file excel", divider='blue')
 
@@ -339,3 +338,4 @@ with st.expander("**:outbox_tray: Esportare un DataFrame in Excel**"):
             file_name="Report_Avanzato.xlsx",
             mime="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
         )
+
