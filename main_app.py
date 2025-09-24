@@ -12,6 +12,7 @@ pages = {
         st.Page("pandas_comand.py", title="Comandi Pandas", icon=":material/storage:"),
         st.Page("numpy_comand.py", title="Comandi NumPy", icon=":material/superscript:"),
         st.Page("grafici_comand.py", title="Realizzazione di grafici", icon=":material/pie_chart:"),
+        st.Page("date_manipulation_comand.py", title="Manipolazione di date", icon=":material/today:"),        
     ],
     "Gestione File e I/O":[
         st.Page("file_comand.py", title="Excel e CSV", icon=":material/folder_code:"),
@@ -25,7 +26,6 @@ pages = {
     ],      
     "Strumenti Utili":[
         st.Page("task_comand.py", title="Task", icon=":material/checklist_rtl:"),
-        st.Page("date_manipulation_comand.py", title="Manipolazione di date", icon=":material/today:"),
         st.Page("istruzioni.py", title="Info utili", icon=":material/info:"),
         st.Page("guida_deployment.py", title="Guida al deployment", icon=":material/deployed_code_update:"),
     ],      
