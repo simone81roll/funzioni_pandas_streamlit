@@ -9,16 +9,16 @@ pages = {
         st.Page("home.py", title="Home Page", icon=":material/home:"),
     ],
     "Analisi Dati":[
-        st.Page("pandas_comand.py", title="Comandi Pandas", icon=":material/storage:"),
-        st.Page("numpy_comand.py", title="Comandi NumPy", icon=":material/superscript:"),
-        st.Page("grafici_comand.py", title="Realizzazione di grafici", icon=":material/pie_chart:"),
+        st.Page("pandas_comand.py", title="Pandas", icon=":material/storage:"),
+        st.Page("numpy_comand.py", title="NumPy", icon=":material/superscript:"),
+        st.Page("grafici_comand.py", title="Grafici", icon=":material/pie_chart:"),
         st.Page("date_manipulation_comand.py", title="Manipolazione di date", icon=":material/today:"),        
     ],
     "Gestione File e I/O":[
         st.Page("file_comand.py", title="Excel e CSV", icon=":material/folder_code:"),
     ],
     "Database":[
-        st.Page("sqlite_comand.py", title="Principali comandi con SQLite3", icon=":material/database:"),
+        st.Page("sqlite_comand.py", title="SQLite3", icon=":material/database:"),
     ],
     "Sviluppo Web":[
         st.Page("email_comand.py", title="Invio e-mail", icon=":material/alternate_email:"),
