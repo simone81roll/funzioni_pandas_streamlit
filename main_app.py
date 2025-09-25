@@ -12,10 +12,11 @@ pages = {
         st.Page("pandas_comand.py", title="Pandas", icon=":material/storage:"),
         st.Page("numpy_comand.py", title="NumPy", icon=":material/superscript:"),
         st.Page("grafici_comand.py", title="Grafici", icon=":material/pie_chart:"),
-        st.Page("date_manipulation_comand.py", title="Manipolazione di date", icon=":material/today:"),        
+        st.Page("date_manipulation_comand.py", title="Manipolazione di date", icon=":material/today:"),
     ],
     "Gestione File e I/O":[
         st.Page("file_comand.py", title="Excel e CSV", icon=":material/folder_code:"),
+        st.Page("txt_comand.py", title="File .txt", icon=":material/text_fields:"),
     ],
     "Database":[
         st.Page("sqlite_comand.py", title="SQLite3", icon=":material/database:"),
